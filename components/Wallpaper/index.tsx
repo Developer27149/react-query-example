@@ -5,14 +5,16 @@ import { searchImgByKeyword } from "../../services/unsplash";
 
 export default function Wallpaper() {
   const [keyword, setKeyword] = useState("code");
-  const { data, isLoading, error, isError, refetch } = useQuery("search-img", async () =>
-    searchImgByKeyword(keyword)
+  const [idx, setIdx] = useState(0);
+  const { data, isLoading, error, isError, refetch } = useQuery(
+    "search-img",
+    async () => searchImgByKeyword(keyword)
   );
-  if (isLoading) return <p>loading...</p>;
-  if (isError) return <p className="text-red-800">{error}</p>;
+
+  if (isError) return <p className="text-red-800">error...</p>;
   return (
-    <div className="mx-auto my-4 w-full">
-      <div className="flex justify-center align-middle">
+    <div className="mx-auto my-0 py-12 w-full h-screen overflow-scroll">
+      <div className="flex justify-center align-middle my-8">
         <input
           type="text"
           value={keyword}
@@ -20,20 +22,33 @@ export default function Wallpaper() {
           placeholder="sea"
           className="m-4  p-1 px-2 rounded-sm text-gray-600 mr-0 outline-none border-blue-400 border-0 border-b"
         />
-        <button className="bg-purple-500 h-8 p-1 m-4 ml-0 text-sm text-purple-100 uppercase border-purple-400 border-0 border-b" onClick={refetch}>
+        <button
+          className="bg-purple-500 h-8 p-1 m-4 ml-0 text-sm text-purple-100 uppercase border-purple-400 border-0 border-b"
+          onClick={() => {
+            refetch();
+          }}
+        >
           Search
         </button>
       </div>
-      <div className="grid grid-rows-5 grid-cols-2">
-        {data.results.map((item) => {
-          return (
-            <img
-              src={item.urls.regular}
-              key={item.urls.regular}
-              alt="wallpaper"
-            />
-          );
-        })}
+      <div className="flex justify-center">
+        {isLoading ? (
+          "loading"
+        ) : (
+          <img
+            src={data?.results[idx].urls.regular}
+            alt="wallpaper"
+            className="object-fit"
+            onClick={() => {
+              setIdx((prev) => {
+                if (prev === data?.results.length - 1) {
+                  return 0;
+                }
+                return prev + 1;
+              });
+            }}
+          />
+        )}
       </div>
     </div>
   );

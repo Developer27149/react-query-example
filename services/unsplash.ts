@@ -15,3 +15,14 @@ export const searchImgByKeyword = async (
     throw new Error("网络异常");
   }
 };
+
+export const searchImgByKeyword2 = async (keyword: string = "code") => {
+  try {
+    return axios.post<IWallpaperResp>("http://localhost:3000/api/search", {
+      keyword,
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error("网络错误");
+  }
+};
